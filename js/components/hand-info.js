@@ -1,11 +1,13 @@
 import AFRAME from 'aframe';
 import * as THREE from 'three';
+import { distance } from '../lib/vec.js';
 
 // 양손의 손목과 검지 끝 위치, 핀치 상태를 판에 글자로 띄운다.
 // 위치는 hand-tracking-controls가 매 프레임 채우는 관절 행렬 배열(jointPoses)에서 읽는다.
 // jointPoses는 문서에 없는 내부 값이라 A-Frame 버전을 바꾸면 다시 확인한다.
 // A-Frame 기본 글꼴에는 한글이 없어서 판의 글자는 영어로 쓴다.
 const WRIST = 0;     // XRHand 관절 번호: 손목
+const THUMB_TIP = 4; // XRHand 관절 번호: 엄지 끝
 const INDEX_TIP = 9; // XRHand 관절 번호: 검지 끝
 
 AFRAME.registerComponent('hand-info', {
@@ -21,6 +23,7 @@ AFRAME.registerComponent('hand-info', {
     // tick에서 매번 new 하지 않도록 계산용 그릇을 미리 만든다.
     this.mat = new THREE.Matrix4();
     this.pos = new THREE.Vector3();
+    this.thumb = new THREE.Vector3(); // 엄지 끝 위치를 담을 두 번째 그릇
 
     // 핀치 이벤트를 받는 함수. 양손에 같은 함수를 붙인다.
     // 리스너를 나중에 떼려면 같은 함수가 필요해서 this에 저장한다.
@@ -80,6 +83,13 @@ AFRAME.registerComponent('hand-info', {
       }
       lines.push(`${side} wrist ${this.fmt(this.pos)}`);
       this.readJoint(handEl, INDEX_TIP, this.pos);
+      // 1단계: 손, 관절 번호, 그릇을 넣어 readJoint를 호출하여 관절의 위치를 읽음.
+      this.readJoint(handEl, THUMB_TIP, this.thumb);
+      // 2단계: 엄지 끝과 검지 끝 사이 거리를 구함
+      const d = distance(this.pos, this.thumb);
+      // 3단계: 거리를 글자로 만듦
+       lines.push(`${side} dist ${(d * 100).toFixed(2)} cm`);
+      lines.push(`${side} thumb ${this.fmt(this.thumb)}`);
       lines.push(`${side} index ${this.fmt(this.pos)}`);
       lines.push(`${side} pinch ${this.pinched[side] ? 'ON' : 'off'}`);
     }

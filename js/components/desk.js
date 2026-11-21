@@ -4,7 +4,6 @@ import AFRAME from 'aframe';
 // 기준점은 책상 아래 바닥 가운데라서 책상 엔티티의 높이값은 늘 0으로 둔다.
 // 윗판과 다리 4개를 자식으로 만들고 class가 mount인 자식을 윗면 뒤쪽에 놓는다.
 // 치수를 바꾸면 장착점과 그 위에 붙은 로봇이 함께 따라온다.
-const INSET = 0.03; // 다리를 모서리에서 안쪽으로 들이는 거리 (m)
 
 AFRAME.registerComponent('desk', {
   schema: {
@@ -14,6 +13,7 @@ AFRAME.registerComponent('desk', {
     top: { default: 0.03 },      // 윗판 두께 (m)
     leg: { default: 0.05 },      // 다리 굵기 (m)
     mountBack: { default: 0.2 }, // 장착점이 뒤 모서리에서 떨어진 거리 (m)
+    inset: { default: 0.03 },      // 다리를 모서리에서 안쪽으로 들이는 거리 (m)
     color: { default: '#C8B79E' },
     legColor: { default: '#8C7B65' },
   },
@@ -25,14 +25,14 @@ AFRAME.registerComponent('desk', {
 
   // init 다음에 한 번 실행되고 desk 속성이 바뀔 때마다 다시 실행된다.
   update() {
-    const { width, depth, height, top, leg, mountBack, color, legColor } = this.data;
+    const { width, depth, height, top, leg, inset, mountBack, color, legColor } = this.data;
 
     // 윗판의 기준점은 상자 가운데이므로 윗면이 height에 오도록 두께의 절반만큼 내린다.
     this.setBox(this.topEl, [width, top, depth], [0, height - top / 2, 0], color);
 
     const legH = height - top;
-    const x = width / 2 - INSET - leg / 2;
-    const z = depth / 2 - INSET - leg / 2;
+    const x = width / 2 - inset - leg / 2;
+    const z = depth / 2 - inset - leg / 2;
     const corners = [[-x, -z], [x, -z], [-x, z], [x, z]];
     corners.forEach(([cx, cz], i) => {
       this.setBox(this.legEls[i], [leg, legH, leg], [cx, legH / 2, cz], legColor);

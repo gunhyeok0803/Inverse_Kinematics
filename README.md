@@ -14,14 +14,6 @@ https://gunhyeok0803.github.io/Inverse_Kinematics/
 
 Quest에서는 기기 설정에서 손 추적이 켜져 있어야 합니다. PC에는 손이 없어서 손 판에 `not tracked`가 뜹니다.
 
-## 지금 되는 것
-
-- 책상과 로봇 장착점, 장착점의 좌표축(빨강 x, 초록 y, 파랑 z)
-- 왼쪽 환경 판: A-Frame과 three.js 버전, three.js를 한 벌만 쓰는지, 보안 연결인지, VR을 지원하는지
-- 오른쪽 손 판: 양손의 손목과 검지 끝 위치(m), 핀치 상태
-
-로봇 팔 불러오기, 역기구학(IK), 정밀 조작 비교는 개발 중입니다.
-
 ## 사용 기술
 
 | 구분 | 내용 |
@@ -68,8 +60,3 @@ js/components/           A-Frame 컴포넌트, 파일 하나에 컴포넌트 하
 | 로봇 장착점 | 윗면 뒤쪽 가운데, 장면 기준 (0, 0.75, -0.95) |
 
 책상 치수는 index.html의 desk 속성에서만 바꿉니다. 장착점은 desk가 다시 계산하므로 치수를 바꿔도 윗면 위에 남습니다.
-
-## 알아 둘 것
-
-- A-Frame 기본 글꼴에는 한글이 없어서 장면 안 글자는 영어로 씁니다.
-- three.js는 `import * as THREE from 'three'`로 불러옵니다. importmap 덕분에 A-Frame 안의 three.js와 같은 객체이고, 환경 판의 one three instance 줄로 확인할 수 있습니다.

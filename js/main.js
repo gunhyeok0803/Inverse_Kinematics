@@ -6,3 +6,4 @@ import './components/axes-helper.js';
 import './components/desk.js';
 import './components/spin.js';
 import './components/hand-info.js';
+import './components/robot-pose.js';

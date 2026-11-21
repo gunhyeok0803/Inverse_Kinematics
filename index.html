@@ -20,18 +20,19 @@
   </head>
   <body>
     <a-scene background="color: #ECECEC">
-      <!-- 바닥 4 m x 4 m. Quest에서는 높이 0이 실제 바닥이고 1은 1 m다 -->
-      <a-plane rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
+      <!-- 바닥 4 m x 4 m. Quest에서는 높이 0이 실제 바닥이고 1은 1 m다.
+           실험실 느낌의 밝은 회색이고, 흰 로봇과 구분되도록 책상은 짙은 청회색으로 둔다 -->
+      <a-plane rotation="-90 0 0" width="4" height="4" color="#B9BEC4"></a-plane>
 
       <!-- 책상. 기준점은 책상 아래 바닥 가운데이고 앞 모서리가 시작 위치에서 0.35 m 앞이다.
-           치수는 desk 속성에서만 바꾼다. 장착점은 desk가 윗면 뒤쪽에 놓는다 -->
-      <a-entity id="desk" desk="width: 1.2; depth: 0.8; height: 0.75; mountBack: 0.2" position="0 0 -0.75">
+           치수와 색은 desk 속성에서만 바꾼다. 장착점은 desk가 윗면 뒤쪽에 놓는다 -->
+      <a-entity id="desk" desk="width: 1.2; depth: 0.8; height: 0.75; mountBack: 0.2; color: #5F6873; legColor: #33383E" position="0 0 -0.75">
         <!-- 로봇 장착점. 기준점은 윗면 위이고 y가 위쪽, z가 사용자 쪽이다 -->
         <a-entity id="robot-mount" class="mount">
-          <!-- 5주 전까지 로봇 자리 표시. 받침 자리 원판(지름 0.2 m)과 좌표축 -->
-          <a-cylinder id="robot-placeholder" radius="0.1" height="0.01" position="0 0.005 0" color="#555"></a-cylinder>
           <a-entity axes-helper="size: 0.2"></a-entity>
-          <!-- 5주에 여기에 robot-arm 엔티티를 넣는다. URDF는 z가 위쪽이라 x축 -90° 회전이 들어간다 -->
+          <!-- 심포니급 6축 협동로봇 근사 모델. 모델도 y가 위쪽이라 돌리지 않고 붙인다.
+               관절각은 robot-pose에서 정하고 지금은 공구가 책상 위를 내려다보는 자세다 -->
+          <a-entity id="robot" gltf-model="./assets/models/symphony-like.glb" robot-pose="j2: -20; j3: 110; j4: 90"></a-entity>
         </a-entity>
       </a-entity>
 

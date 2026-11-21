@@ -31,8 +31,10 @@
         <a-entity id="robot-mount" class="mount">
           <a-entity axes-helper="size: 0.2"></a-entity>
           <!-- 심포니급 6축 협동로봇 근사 모델. 모델도 y가 위쪽이라 돌리지 않고 붙인다.
-               관절각은 robot-pose에서 정하고 지금은 공구가 책상 위를 내려다보는 자세다 -->
-          <a-entity id="robot" gltf-model="./assets/models/symphony-like.glb" robot-pose="j2: -20; j3: 110; j4: 90"></a-entity>
+               관절각은 robot-pose에서 정하고 지금은 공구가 책상 위를 내려다보는 자세다.
+               robot-mvp는 공구 끝 주황 공을 핀치로 잡아 끌면 관절이 따라오게 하는 AI MVP다 -->
+          <a-entity id="robot" gltf-model="./assets/models/symphony-like.glb" robot-pose="j2: -20; j3: 110; j4: 90"
+                    robot-mvp="left: #leftHand; right: #rightHand"></a-entity>
         </a-entity>
       </a-entity>
 

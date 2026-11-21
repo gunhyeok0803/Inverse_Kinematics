@@ -7,3 +7,4 @@ import './components/desk.js';
 import './components/spin.js';
 import './components/hand-info.js';
 import './components/robot-pose.js';
+import './components/robot-mvp.js';

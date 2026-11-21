@@ -1,55 +1,75 @@
 # WebXR IK
 
-Meta Quest에서 컨트롤러 없이 맨손 핀치로 3D 로봇 팔 끝을 잡고 일반 조작과 정밀 조작의 차이를 수치로 보이는 A-Frame 웹 과제다.
-같은 GitHub Pages 주소를 Quest Browser(맨손)와 PC 브라우저(마우스)에서 연다.
+Meta Quest에서 컨트롤러 없이 맨손 핀치로 3D 로봇 팔의 끝을 잡고 움직이는 웹 VR 프로젝트입니다.
+일반 조작과 정밀 조작의 차이를 수치로 비교하는 것이 목표이고, 설치 없이 브라우저 주소 하나로 엽니다.
 
-## 실행
+## 데모
 
-PC에서 확인할 때는 아래 둘 중 하나로 연다. 파일을 더블클릭해서 열면 모듈을 불러오지 못한다.
+https://gunhyeok0803.github.io/Inverse_Kinematics/
 
-- VS Code Live Server: index.html을 연 뒤 오른쪽 아래 Go Live
-- 터미널: 이 폴더에서 `python -m http.server 5500` 후 http://localhost:5500
-
-Quest에서는 https 주소가 필요하므로 GitHub Pages 주소로 연다.
-
-## 구성
-
-```
-index.html              importmap(A-Frame 1.8.0, three r184)과 장면
-js/main.js              aframe과 컴포넌트를 불러오는 진입점
-js/components/          A-Frame 컴포넌트, 파일 하나에 컴포넌트 하나
-js/lib/                 장면과 상관없는 계산 함수(2주부터)
-```
-
-| 컴포넌트 | 주차 | 역할 |
+| 기기 | 여는 방법 | 조작 |
 |---|---|---|
-| env-info | 1 | 버전, three 한 벌 여부, 보안 연결, VR 지원 여부 표시 |
-| desk | 1 | 책상(윗판, 다리)을 만들고 로봇 장착점을 윗면 뒤쪽에 놓음 |
-| axes-helper | 1 | 엔티티의 좌표축 표시(빨강 x, 초록 y, 파랑 z) |
-| input-logger | 1 | 핀치 이벤트와 손 관절 위치 표시 |
-| stroke-draw | 2 | 핀치하는 동안 손끝 궤적을 선으로 그리고 CSV 저장 |
-| poke-button | 2 | 검지로 누르는 가상 버튼 |
-| pinch-grab | 3 | 핀치로 물체 잡기, 놓기 보정 |
-| precision-move | 4 | 속도 기반 이득과 EMA |
-| robot-arm | 5 | URDF 로봇 팔 불러오기 |
-| ik-solver | 5, 6 | CCD, 의사역행렬, DLS |
-| perf-logger | 6 | IK 계산 시간과 FPS 기록 |
+| Meta Quest | Quest Browser에서 위 주소를 열고 오른쪽 아래 VR 버튼을 누른 뒤 컨트롤러를 내려놓습니다 | 맨손, 엄지와 검지를 붙이면 핀치 |
+| PC | Chrome 같은 브라우저에서 위 주소를 엽니다 | 마우스 드래그로 둘러보기, W A S D로 이동 |
+
+Quest에서는 기기 설정에서 손 추적이 켜져 있어야 합니다. PC에는 손이 없어서 손 판에 `not tracked`가 뜹니다.
+
+## 지금 되는 것
+
+- 책상과 로봇 장착점, 장착점의 좌표축(빨강 x, 초록 y, 파랑 z)
+- 왼쪽 환경 판: A-Frame과 three.js 버전, three.js를 한 벌만 쓰는지, 보안 연결인지, VR을 지원하는지
+- 오른쪽 손 판: 양손의 손목과 검지 끝 위치(m), 핀치 상태
+
+로봇 팔 불러오기, 역기구학(IK), 정밀 조작 비교는 개발 중입니다.
+
+## 사용 기술
+
+| 구분 | 내용 |
+|---|---|
+| 언어 | JavaScript(ES 모듈), HTML |
+| 3D와 VR | A-Frame 1.8.0, three.js r184(A-Frame 배포판 super-three), WebXR Device API와 Hand Input |
+| 불러오기 | importmap으로 CDN에서 불러옵니다. 설치나 빌드 과정이 없습니다 |
+| 배포 | GitHub Pages |
+| 도구 | VS Code와 Live Server, Chrome 개발자 도구, Meta Quest Pro |
+
+## PC에서 직접 실행
+
+파일을 더블클릭해서 열면 모듈을 불러오지 못하므로 로컬 서버로 엽니다.
+
+- VS Code: index.html을 연 뒤 오른쪽 아래 Go Live를 누릅니다.
+- 터미널: 이 폴더에서 `python -m http.server 5500`을 실행하고 http://localhost:5500 을 엽니다.
+
+Quest의 WebXR은 https에서만 열리므로 Quest에서는 데모 주소를 씁니다.
+
+## 폴더 구성
+
+```
+index.html               importmap과 장면
+js/main.js               aframe과 컴포넌트를 불러오는 진입점
+js/components/           A-Frame 컴포넌트, 파일 하나에 컴포넌트 하나
+```
+
+| 컴포넌트 | 역할 |
+|---|---|
+| env-info | 환경 확인 판 |
+| desk | 책상(윗판, 다리)을 만들고 로봇 장착점을 윗면 뒤쪽에 놓습니다 |
+| axes-helper | 엔티티의 좌표축을 그립니다 |
+| hand-info | 손목과 검지 끝 위치, 핀치 상태를 판에 띄웁니다 |
+| spin | 엔티티를 y축으로 돌립니다(확인용, 장면에서는 쓰지 않음) |
 
 ## 장면 배치
 
-단위는 m이고 사용자는 시작 위치(0, 0, 0)에서 -z 방향을 본다. Quest에서는 높이 0이 실제 바닥이다.
+단위는 m이고 사용자는 시작 위치(0, 0, 0)에서 -z 방향을 봅니다. Quest에서는 높이 0이 실제 바닥입니다.
 
 | 항목 | 값 |
 |---|---|
 | 바닥 | 4 x 4 |
 | 책상 | 가로 1.2, 깊이 0.8, 높이 0.75, 앞 모서리 z = -0.35 |
-| 로봇 장착점 | 윗면 뒤쪽 가운데, 뒤 모서리에서 0.2, 장면 기준 (0, 0.75, -0.95) |
+| 로봇 장착점 | 윗면 뒤쪽 가운데, 장면 기준 (0, 0.75, -0.95) |
 
-책상 치수는 index.html의 desk 속성에서만 바꾼다. 장착점은 desk가 다시 계산하므로 로봇은 늘 윗면 위에 있다.
-5주에 robot-arm 엔티티를 `#robot-mount` 안에 넣는다. URDF는 z가 위쪽이고 A-Frame은 y가 위쪽이라 x축 -90° 회전이 필요하다.
+책상 치수는 index.html의 desk 속성에서만 바꿉니다. 장착점은 desk가 다시 계산하므로 치수를 바꿔도 윗면 위에 남습니다.
 
 ## 알아 둘 것
 
-- A-Frame 기본 글꼴에는 한글이 없다. 장면 안 글자는 영어로 쓴다.
-- A-Frame에는 grabbable 컴포넌트가 이미 있어서 직접 만드는 잡기 컴포넌트는 pinch-grab이다.
-- three는 `import * as THREE from 'three'`로 불러온다. importmap 덕분에 A-Frame 안의 three와 같은 객체다(env-info 판의 one three instance로 확인).
+- A-Frame 기본 글꼴에는 한글이 없어서 장면 안 글자는 영어로 씁니다.
+- three.js는 `import * as THREE from 'three'`로 불러옵니다. importmap 덕분에 A-Frame 안의 three.js와 같은 객체이고, 환경 판의 one three instance 줄로 확인할 수 있습니다.

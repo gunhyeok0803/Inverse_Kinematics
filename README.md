@@ -39,7 +39,11 @@ Quest의 WebXR은 https에서만 열리므로 Quest에서는 데모 주소를 �
 index.html               importmap과 장면
 js/main.js               aframe과 컴포넌트를 불러오는 진입점
 js/components/           A-Frame 컴포넌트, 파일 하나에 컴포넌트 하나
+assets/models/           로봇 모델(GLB)
+tools/                   로봇 모델을 다시 만드는 Python 스크립트
 ```
+
+로봇은 심포니급 6축 협동로봇을 같은 급 협동로봇의 공개 치수 비율로 만든 근사 모델입니다. 관절 노드 joint1~joint6의 회전축은 차례로 y, x, x, x, z, y이고, 모든 관절각이 0이면 팔이 위로 곧게 섭니다.
 
 | 컴포넌트 | 역할 |
 |---|---|
@@ -47,6 +51,7 @@ js/components/           A-Frame 컴포넌트, 파일 하나에 컴포넌트 하
 | desk | 책상(윗판, 다리)을 만들고 로봇 장착점을 윗면 뒤쪽에 놓습니다 |
 | axes-helper | 엔티티의 좌표축을 그립니다 |
 | hand-info | 손목과 검지 끝 위치, 핀치 상태를 판에 띄웁니다 |
+| robot-pose | 로봇 모델의 관절 각도를 도 단위로 정합니다 |
 | spin | 엔티티를 y축으로 돌립니다(확인용, 장면에서는 쓰지 않음) |
 
 ## 장면 배치

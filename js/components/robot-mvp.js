@@ -45,17 +45,23 @@ AFRAME.registerComponent('robot-mvp', {
       this.grabHand = evt.currentTarget;
       this.offset.subVectors(this.tcpPos, pinch);
       this.setHandle(true);
+      // 다른 컴포넌트가 쓸 수 있게 잡은 순간의 공구 끝 장면 좌표를 알린다. 받는 쪽이 저장해도 되도록 복사본을 보낸다
+      this.el.emit('tool-grab', { position: this.tcpPos.clone() });
     };
     this.onMove = (evt) => {
       if (evt.currentTarget !== this.grabHand) return;
       this.target.copy(evt.detail.position).add(this.offset);
       this.target.y = Math.max(this.target.y, this.minY());
       this.solve(this.target);
+      // IK가 끝난 뒤 공구 끝이 실제로 간 장면 좌표를 알린다. 목표점에 못 닿으면 목표점과 다를 수 있다
+      this.tcp.getWorldPosition(this.tcpPos);
+      this.el.emit('tool-move', { position: this.tcpPos.clone() });
     };
     this.onEnd = (evt) => {
       if (evt.currentTarget !== this.grabHand) return;
       this.grabHand = null;
       this.setHandle(false);
+      this.el.emit('tool-release');
     };
     for (const handEl of [this.data.left, this.data.right]) {
       if (!handEl) continue;

@@ -21,9 +21,10 @@ AFRAME.registerComponent('hand-info', {
     this.pinched = { left: false, right: false };
 
     // tick에서 매번 new 하지 않도록 계산용 그릇을 미리 만든다.
-    this.mat = new THREE.Matrix4();
-    this.pos = new THREE.Vector3();
-    this.thumb = new THREE.Vector3(); // 엄지 끝 위치를 담을 두 번째 그릇
+    this.jointMatrix = new THREE.Matrix4();
+    this.wrist = new THREE.Vector3();    // 손목 위치를 담을 그릇
+    this.indexTip = new THREE.Vector3(); // 검지 끝 위치를 담을 그릇
+    this.thumbTip = new THREE.Vector3(); // 엄지 끝 위치를 담을 그릇
 
     // 핀치 이벤트를 받는 함수. 양손에 같은 함수를 붙인다.
     // 리스너를 나중에 떼려면 같은 함수가 필요해서 this에 저장한다.
@@ -52,24 +53,24 @@ AFRAME.registerComponent('hand-info', {
     }
   },
 
-  // 손 엔티티(handEl)에서 관절 index의 위치를 읽어 target에 넣는다.
+  // 손 엔티티(handEl)에서 관절 번호 jointIndex의 위치를 읽어 target에 넣는다.
   // 손을 찾았으면 true, 아직 못 찾았으면 false를 돌려준다.
-  readJoint(handEl, index, target) {
+  readJoint(handEl, jointIndex, target) {
     // 1단계: 손을 찾았는지 확인
-    const htc = handEl && handEl.components['hand-tracking-controls'];
-    if (!htc || !htc.hasPoses) {
+    const handTracking = handEl && handEl.components['hand-tracking-controls'];
+    if (!handTracking || !handTracking.hasPoses) {
       return false;
     }
-    // 2단계: 관절 행렬을 index*16부터 읽어 this.mat을 채워서 여기에서 위치를 찾음
-    this.mat.fromArray(htc.jointPoses, index * 16);
+    // 2단계: 관절 행렬을 jointIndex*16부터 읽어 this.jointMatrix를 채워서 여기에서 위치를 찾음
+    this.jointMatrix.fromArray(handTracking.jointPoses, jointIndex * 16);
     // 3단계: 찾은 위치를 target에 넣음
-    target.setFromMatrixPosition(this.mat);
+    target.setFromMatrixPosition(this.jointMatrix);
     return true;
   },
 
   // 위치 x, y, z를 소수 둘째 자리까지 글자로 만든다.
-  fmt(v) {
-    return `${v.x.toFixed(2)} ${v.y.toFixed(2)} ${v.z.toFixed(2)}`;
+  formatPosition(position) {
+    return `${position.x.toFixed(2)} ${position.y.toFixed(2)} ${position.z.toFixed(2)}`;
   },
 
   tick() {
@@ -77,20 +78,20 @@ AFRAME.registerComponent('hand-info', {
     for (const side of ['left', 'right']) {
       const handEl = this.data[side];
       // 손목을 못 읽으면 그 손은 안 보이는 것으로 보고 다음 손으로 넘어간다.
-      if (!this.readJoint(handEl, WRIST, this.pos)) {
+      if (!this.readJoint(handEl, WRIST, this.wrist)) {
         lines.push(`${side}: not tracked`);
         continue;
       }
-      lines.push(`${side} wrist ${this.fmt(this.pos)}`);
-      this.readJoint(handEl, INDEX_TIP, this.pos);
+      lines.push(`${side} wrist ${this.formatPosition(this.wrist)}`);
       // 1단계: 손, 관절 번호, 그릇을 넣어 readJoint를 호출하여 관절의 위치를 읽음.
-      this.readJoint(handEl, THUMB_TIP, this.thumb);
+      this.readJoint(handEl, INDEX_TIP, this.indexTip);
+      this.readJoint(handEl, THUMB_TIP, this.thumbTip);
       // 2단계: 엄지 끝과 검지 끝 사이 거리를 구함
-      const d = distance(this.pos, this.thumb);
+      const pinchDistance = distance(this.indexTip, this.thumbTip);
       // 3단계: 거리를 글자로 만듦
-       lines.push(`${side} dist ${(d * 100).toFixed(2)} cm`);
-      lines.push(`${side} thumb ${this.fmt(this.thumb)}`);
-      lines.push(`${side} index ${this.fmt(this.pos)}`);
+      lines.push(`${side} distance ${(pinchDistance * 100).toFixed(2)} cm`);
+      lines.push(`${side} thumb ${this.formatPosition(this.thumbTip)}`);
+      lines.push(`${side} index ${this.formatPosition(this.indexTip)}`);
       lines.push(`${side} pinch ${this.pinched[side] ? 'ON' : 'off'}`);
     }
     this.el.setAttribute('text', 'value', lines.join('\n'));

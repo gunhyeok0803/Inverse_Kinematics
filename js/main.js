@@ -9,3 +9,6 @@ import './components/hand-info.js';
 import './components/robot-pose.js';
 import './components/robot-mvp.js';
 import './components/tool-draw.js';
+import './components/press-button.js';
+import './components/tool-log.js';
+import './components/start-view.js';

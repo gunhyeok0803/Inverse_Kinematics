@@ -25,7 +25,7 @@ AFRAME.registerComponent('env-info', {
       return;
     }
     navigator.xr.isSessionSupported('immersive-vr')
-      .then((ok) => { this.lines.vr = `immersive-vr: ${ok ? 'yes' : 'no'}`; })
+      .then((supported) => { this.lines.vr = `immersive-vr: ${supported ? 'yes' : 'no'}`; })
       .catch(() => { this.lines.vr = 'immersive-vr: error'; })
       .finally(() => this.render());
   },

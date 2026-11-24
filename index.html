@@ -36,9 +36,10 @@
                어깨, 팔꿈치, 손목이 꺾이는 각도와 공구 끝이 보인다. 정면 배치에서는 관절이 앞뒤로만 움직여 잘 보이지 않았다.
                관절각은 robot-pose에서 정한다. 어깨를 앞으로 기울이고 팔을 뻗어 공구가 책상 위를 내려다보는 자세라서
                공구 끝이 받침에서 약 0.6 m 떨어지고 그 주변에 팔이 없다. 팔을 몸 쪽으로 접으면 공구 끝 주변의 선이 팔과 겹친다.
-               robot-mvp는 공구 끝 주황 공을 핀치로 잡아 끌면 관절이 따라오게 하는 AI MVP다 -->
+               robot-mvp는 공구 끝 주황 공을 핀치로 잡아 끌면 관절이 따라오게 하는 AI MVP다.
+               joint-axes는 관절마다 좌표축을 띄우고 공구 끝 아래에 장면 좌표를 띄운다 -->
           <a-entity id="robot" gltf-model="./assets/models/symphony-like.glb" rotation="0 70 0" robot-pose="joint2: 30; joint3: 75; joint4: 75"
-                    robot-mvp="left: #leftHand; right: #rightHand; desk: #desk"></a-entity>
+                    robot-mvp="left: #leftHand; right: #rightHand; desk: #desk" joint-axes="size: 0.08"></a-entity>
         </a-entity>
         <!-- 기록 저장 버튼. 책상 윗면의 오른쪽 앞, 앞 모서리와 오른쪽 모서리에서 18 cm 안쪽이다.
              검지 끝으로 누르면 button-press를 보내고 tool-log가 받아 기록을 내려받는다 -->

@@ -7,6 +7,7 @@ import { distance } from '../lib/vec.js';
 // 선의 점 칸은 처음에 넉넉히 만들어 두고 그릴 점 수만 늘린다(three.js 매뉴얼 How to update things).
 // 엔티티를 장면 원점에 두므로 선의 좌표는 장면 좌표와 같다.
 // WebGL 선은 굵기가 1픽셀로 고정이라 Quest에서 가늘면 나중에 굵은 선으로 바꾼다.
+// 가상 버튼(SAVE)을 누르면 지금까지 그린 선을 모두 지운다. 기록 저장과 같은 버튼이라 저장한 시도의 선이 함께 지워진다.
 const MAX_POINTS = 2000;          // 선 하나에 담을 수 있는 최대 점 수
 const MIN_POINT_SPACING = 0.001;  // 선의 점 간격(m). 마지막 점에서 이만큼 움직였을 때만 점을 더한다. 로봇이 움직이는 정밀도와는 상관없다
 
@@ -14,6 +15,7 @@ AFRAME.registerComponent('tool-draw', {
   schema: {
     color: { default: '#E0218A' }, // 선 색. 흰 로봇, 회색 바닥, 짙은 책상과 구분되는 자홍색
     robot: { type: 'selector' },   // 공구 끝 이벤트를 보내는 로봇 엔티티(robot-mvp가 붙은 것)
+    button: { type: 'selector' },  // 누르면 선을 모두 지우는 가상 버튼 엔티티(press-button이 붙은 것)
   },
 
   init() {
@@ -31,9 +33,13 @@ AFRAME.registerComponent('tool-draw', {
       robot.addEventListener('tool-move', this.onMove);
       robot.addEventListener('tool-release', this.onRelease);
     }
+    // 버튼을 누르면 clearLines로 넘긴다
+    this.onPress = () => this.clearLines();
+    if (this.data.button) this.data.button.addEventListener('button-press', this.onPress);
   },
 
   remove() {
+    if (this.data.button) this.data.button.removeEventListener('button-press', this.onPress);
     const robot = this.data.robot;
     if (!robot) return;
     robot.removeEventListener('tool-grab', this.onGrab);
@@ -73,6 +79,19 @@ AFRAME.registerComponent('tool-draw', {
     // 1단계: 선 끝내기
     this.line = null;
   },
+
+  // 버튼을 누른 순간. 지금까지 그린 선을 모두 지우고 처음 상태로 돌아간다.
+    clearLines() {
+    // 1단계: 지금까지 만든 선을 모두 엔티티에서 뗌
+    for (let i = 0; i < this.lineCount; i++) {
+      this.el.removeObject3D(`line${i}`);
+    }
+    // 2단계: 선 수와 지금 그리는 선을 처음 상태로 되돌림
+    this.lineCount = 0;
+    this.line = null;
+    this.pointCount = 0;
+  }, 
+
 
   // 새 선을 하나 만들어 엔티티에 붙인다.
   startLine() {

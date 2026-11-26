@@ -13,3 +13,4 @@ import './components/press-button.js';
 import './components/tool-log.js';
 import './components/start-view.js';
 import './components/joint-axes.js';
+import './components/vr-exit-button.js';

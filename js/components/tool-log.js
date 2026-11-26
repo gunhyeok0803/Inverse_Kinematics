@@ -5,7 +5,7 @@ import AFRAME from 'aframe';
 // 위치는 robot-mvp가 보내는 tool-grab, tool-move 이벤트로 받는다.
 // detail.toolTipPosition은 공구 끝, detail.handPosition은 핀치 위치이고 둘 다 장면 좌표의 복사본이다.
 // tool-draw와 달리 가까운 점을 거르지 않고 오는 대로 모두 남긴다. pinchmoved가 매 프레임 오므로 매 프레임 한 행이다.
-// 가상 버튼을 누르면 지금까지의 기록 전부를 CSV 파일로 내려받는다. 내려받아도 기록은 지우지 않는다.
+// 가상 버튼을 누르면 지금까지의 기록 전부를 CSV 파일로 내려받고 기록을 비운다. 그래서 파일 하나에 시도 한 번의 기록만 들어간다.
 
 AFRAME.registerComponent('tool-log', {
   schema: {
@@ -73,6 +73,9 @@ AFRAME.registerComponent('tool-log', {
     // 3단계: 버튼 글자를 저장한 행 수로 바꿔 VR 안에서도 저장된 것을 보이게 함
     const button = this.data.button;
     if (button) button.setAttribute('press-button', 'label', `SAVED ${this.rows.length} rows`);
+    // 4단계: 다음 파일에 이번 기록이 다시 들어가지 않게 기록을 처음 상태로 되돌림
+    this.rows = [];
+    this.dragNumber = 0;  
 
   },
 

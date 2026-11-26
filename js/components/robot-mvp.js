@@ -7,21 +7,28 @@ import { pushOutOfCapsule } from '../lib/capsule.js';
 // IK는 위치만 맞추는 CCD이고 joint1~joint5만 돌린다. joint6은 공구를 감는 축이라 위치에 영향이 없다.
 // 핀치 위치는 reference space 기준이다. #rig가 원점에 있어서 장면 좌표와 같다고 본다.
 // IK에 넘기기 전에 목표점을 책상 위, 로봇 몸 밖으로 옮긴다. 그래서 공구 끝이 책상이나 로봇 몸을 뚫고 지나가지 않는다.
-const JOINT_AXES = { 1: 'y', 2: 'x', 3: 'x', 4: 'x', 5: 'z' };
+const JOINT_AXES = { 1: 'y', 2: 'x', 3: 'x', 4: 'x', 5: 'y' };
 const AXIS_VECTORS = { x: new THREE.Vector3(1, 0, 0), y: new THREE.Vector3(0, 1, 0), z: new THREE.Vector3(0, 0, 1) };
-const JOINT_LIMIT = THREE.MathUtils.degToRad(170); // 관절 회전 범위 ±170°
+// 관절 회전 범위. 심포니 5 도면 사양대로 joint3만 ±160°이고 나머지는 ±360°다
+const JOINT_LIMITS = {
+  1: THREE.MathUtils.degToRad(360),
+  2: THREE.MathUtils.degToRad(360),
+  3: THREE.MathUtils.degToRad(160),
+  4: THREE.MathUtils.degToRad(360),
+  5: THREE.MathUtils.degToRad(360),
+};
 const DESK_CLEARANCE = 0.03; // 공구 끝이 책상 윗면에서 이만큼 위로만 가게 한다 (m)
 const BODY_CLEARANCE = 0.02; // 공구 끝이 로봇 몸 캡슐 표면에서 이만큼 떨어지게 한다 (m)
 
 // 로봇 몸을 감싸는 캡슐 세 개. 공구 끝이 닿을 수 있는 기둥, 위팔, 아래팔만 감싼다.
 // 공구 끝은 손목보다 앞에 붙어 있어서 손목 쪽으로는 들어가지 못한다.
-// start, end는 node 기준 좌표이고 치수는 tools/make_symphony_glb.py의 부품 값에서 가져왔다(단위 m).
-// 위팔과 아래팔은 관절 축 방향(x)으로 0.12 m, 0.03 m 비켜 있어서 선분도 그만큼 옮긴다.
-// 반지름은 그 마디에서 가장 굵은 부품(관절 덮개)에 맞췄다.
+// start, end는 node 기준 좌표이고 치수는 tools/build_symphony5_drawing.py의 부품 값(심포니 5 도면)에서 가져왔다(단위 m).
+// 위팔과 아래팔은 관절 축 방향(x)으로 0.1378 m, 0.0066 m 비켜 있어서 선분도 그만큼 옮긴다.
+// 반지름은 그 마디에서 가장 굵은 부품에 맞췄다(기둥은 받침 고리, 위팔은 아래 고리, 아래팔은 팔꿈치 굽은 관).
 const BODY_CAPSULES = [
-  { name: '기둥', node: 'joint1', start: [0, -0.09, 0], end: [0, 0.0725, 0], radius: 0.09 },  // 받침 바닥에서 어깨 축까지
-  { name: '위팔', node: 'joint2', start: [0.12, 0, 0], end: [0.12, 0.425, 0], radius: 0.062 }, // 어깨에서 팔꿈치까지
-  { name: '아래팔', node: 'joint3', start: [0.03, 0, 0], end: [0.03, 0.392, 0], radius: 0.05 }, // 팔꿈치에서 손목까지
+  { name: '기둥', node: 'joint1', start: [0, -0.095, 0], end: [0, 0.072, 0], radius: 0.082 },       // 받침 바닥에서 어깨 축까지
+  { name: '위팔', node: 'joint2', start: [0.1378, 0, 0], end: [0.1378, 0.425, 0], radius: 0.0592 },  // 어깨에서 팔꿈치까지
+  { name: '아래팔', node: 'joint3', start: [0.0066, 0, 0], end: [0.0066, 0.3923, 0], radius: 0.057 }, // 팔꿈치에서 손목까지
 ];
 
 AFRAME.registerComponent('robot-mvp', {
@@ -169,7 +176,8 @@ AFRAME.registerComponent('robot-mvp', {
         this.crossProduct.crossVectors(this.jointToTcp, this.jointToTarget);
         const angle = Math.atan2(this.crossProduct.dot(this.jointAxis), this.jointToTcp.dot(this.jointToTarget));
 
-        joint.rotation[axisName] = THREE.MathUtils.clamp(joint.rotation[axisName] + angle, -JOINT_LIMIT, JOINT_LIMIT);
+        const jointLimit = JOINT_LIMITS[jointIndex + 1];
+        joint.rotation[axisName] = THREE.MathUtils.clamp(joint.rotation[axisName] + angle, -jointLimit, jointLimit);
         joint.updateMatrixWorld(true);
       }
       this.tcp.getWorldPosition(this.tcpPosition);

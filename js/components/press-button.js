@@ -17,7 +17,7 @@ AFRAME.registerComponent('press-button', {
     left: { type: 'selector' },     // 왼손 엔티티
     right: { type: 'selector' },    // 오른손 엔티티
     label: { default: 'SAVE' },     // 버튼 위 글자. 기본 글꼴에 한글이 없어서 영어로 쓴다
-    color: { default: '#2A9D8F' },  // 버튼 색. 짙은 책상, 흰 로봇, 자홍색 선과 구분되는 청록색
+    color: { default: '#2A9D8F' },  // 버튼 색. 밝은 책상, 검은 로봇, 자홍색 선과 구분되는 청록색
   },
 
   init() {
@@ -44,8 +44,8 @@ AFRAME.registerComponent('press-button', {
   },
 
   update() {
-    // 책상이 짙어서 글자는 흰색으로 쓴다
-    this.labelEl.setAttribute('text', { value: this.data.label, align: 'center', color: '#FFFFFF', width: 0.6 });
+    // 책상이 밝아서 글자는 짙은 색으로 쓴다
+    this.labelEl.setAttribute('text', { value: this.data.label, align: 'center', color: '#222222', width: 0.6 });
   },
 
   remove() {

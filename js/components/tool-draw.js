@@ -13,7 +13,7 @@ const MIN_POINT_SPACING = 0.001;  // 선의 점 간격(m). 마지막 점에서 �
 
 AFRAME.registerComponent('tool-draw', {
   schema: {
-    color: { default: '#E0218A' }, // 선 색. 흰 로봇, 회색 바닥, 짙은 책상과 구분되는 자홍색
+    color: { default: '#E0218A' }, // 선 색. 검은 로봇, 회색 바닥, 밝은 책상과 구분되는 자홍색
     robot: { type: 'selector' },   // 공구 끝 이벤트를 보내는 로봇 엔티티(robot-mvp가 붙은 것)
     button: { type: 'selector' },  // 누르면 선을 모두 지우는 가상 버튼 엔티티(press-button이 붙은 것)
   },

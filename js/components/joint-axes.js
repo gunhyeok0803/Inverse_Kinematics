@@ -2,7 +2,7 @@ import AFRAME from 'aframe';
 import * as THREE from 'three';
 
 // 로봇 관절마다 좌표축을 띄우고 공구 끝 아래에 장면 좌표를 글자로 띄운다. 빨강 x, 초록 y, 파랑 z.
-// 관절이 어느 축으로 도는지 눈으로 확인하는 표시 도구라 AI가 짰다. 회전축은 joint1 y, joint2~4 x, joint5 z, joint6 y.
+// 관절이 어느 축으로 도는지 눈으로 확인하는 표시 도구라 AI가 짰다. 회전축은 joint1 y, joint2~4 x, joint5 y, joint6 x.
 // 좌표축은 각 관절 노드의 자식이라 관절과 같이 돌고, 로봇 몸체에 가려도 보이게 맨 위에 그린다.
 // 글자는 장면에 바로 붙여 로봇과 같이 돌지 않게 하고 매번 카메라 쪽을 보게 한다.
 const NODE_NAMES = ['joint1', 'joint2', 'joint3', 'joint4', 'joint5', 'joint6', 'tcp'];
@@ -20,7 +20,7 @@ AFRAME.registerComponent('joint-axes', {
     this.toolTipPosition = new THREE.Vector3();
     this.cameraPosition = new THREE.Vector3();
 
-    // 공구 끝 좌표 글자. 짙은 책상과 밝은 벽 어느 쪽에서도 읽히게 반투명 검은 판 위에 흰 글자로 쓴다
+    // 공구 끝 좌표 글자. 밝은 책상과 벽 앞에서도 읽히게 반투명 검은 판 위에 흰 글자로 쓴다
     this.labelEl = document.createElement('a-entity');
     this.labelEl.setAttribute('text', { value: '', align: 'center', color: '#FFFFFF', width: 0.5 });
     const background = document.createElement('a-plane');

@@ -21,24 +21,24 @@
   <body>
     <a-scene background="color: #ECECEC">
       <!-- 바닥 4 m x 4 m. Quest에서는 높이 0이 실제 바닥이고 1은 1 m다.
-           실험실 느낌의 밝은 회색이고, 흰 로봇과 구분되도록 책상은 짙은 청회색으로 둔다 -->
+           실험실 느낌의 밝은 회색이고, 검은 로봇이 잘 보이도록 책상 윗면은 바닥보다 밝은 회색으로 둔다 -->
       <a-plane rotation="-90 0 0" width="4" height="4" color="#B9BEC4"></a-plane>
 
       <!-- 책상. 기준점은 책상 아래 바닥 가운데이고 앞 모서리가 시작 위치에서 0.35 m 앞이다.
            치수와 색은 desk 속성에서만 바꾼다. 장착점은 desk가 윗면 위 mountX, mountBack 자리에 놓는다.
            장착점은 왼쪽 뒤라서 로봇이 책상 가운데 쪽으로 팔을 뻗는다 -->
-      <a-entity id="desk" desk="width: 1.2; depth: 0.8; height: 0.75; mountX: -0.45; mountBack: 0.30; color: #5F6873; legColor: #33383E" position="0 0 -0.75">
+      <a-entity id="desk" desk="width: 1.2; depth: 0.8; height: 0.75; mountX: -0.45; mountBack: 0.30; color: #D9DCE0; legColor: #33383E" position="0 0 -0.75">
         <!-- 로봇 장착점. 기준점은 윗면 위이고 y가 위쪽, z가 사용자 쪽이다 -->
         <a-entity id="robot-mount" class="mount">
           <a-entity axes-helper="size: 0.2"></a-entity>
-          <!-- 심포니급 6축 협동로봇 근사 모델. 모델도 y가 위쪽이다.
+          <!-- 심포니 5 공식 도면 치수로 Blender에서 만든 모델(tools/build_symphony5_drawing.py). 모델도 y가 위쪽이다.
                y축으로 70도 돌려 사용자 쪽 오른편을 보게 했다. 사용자가 책상 앞에 서면 팔을 사선 위에서 보게 되어
                어깨, 팔꿈치, 손목이 꺾이는 각도와 공구 끝이 보인다. 정면 배치에서는 관절이 앞뒤로만 움직여 잘 보이지 않았다.
-               관절각은 robot-pose에서 정한다. 어깨를 앞으로 기울이고 팔을 뻗어 공구가 책상 위를 내려다보는 자세라서
-               공구 끝이 받침에서 약 0.6 m 떨어지고 그 주변에 팔이 없다. 팔을 몸 쪽으로 접으면 공구 끝 주변의 선이 팔과 겹친다.
+               관절각은 robot-pose에서 정한다. 공구 끝은 예전 모델과 같은 자리이고 공구가 바로 아래를 본다.
+               joint2 + joint3 + joint4 = 90이라 공구가 수직이고, 공구 끝이 받침에서 약 0.6 m 떨어져 그 주변에 팔이 없다.
                robot-mvp는 공구 끝 주황 공을 핀치로 잡아 끌면 관절이 따라오게 하는 AI MVP다.
                joint-axes는 관절마다 좌표축을 띄우고 공구 끝 아래에 장면 좌표를 띄운다 -->
-          <a-entity id="robot" gltf-model="./assets/models/symphony-like.glb" rotation="0 70 0" robot-pose="joint2: 30; joint3: 75; joint4: 75"
+          <a-entity id="robot" gltf-model="./assets/models/symphony-5-drawing.glb" rotation="0 70 0" robot-pose="joint1: -9; joint2: 18; joint3: 99; joint4: -27; joint5: -90"
                     robot-mvp="left: #leftHand; right: #rightHand; desk: #desk" joint-axes="size: 0.08"></a-entity>
         </a-entity>
         <!-- 기록 저장 버튼. 책상 윗면의 오른쪽 앞, 앞 모서리와 오른쪽 모서리에서 18 cm 안쪽이다.

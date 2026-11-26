@@ -2,9 +2,9 @@ import AFRAME from 'aframe';
 import * as THREE from 'three';
 
 // 로봇 모델의 관절 각도를 정한다. 단위는 도.
-// 모델 파일(assets/models/symphony-like.glb)의 관절 노드 joint1~joint6을 돌린다.
-// 회전축은 모델을 만들 때 정한 대로 joint1 y, joint2~4 x, joint5 z, joint6 y이고 모든 관절이 0이면 팔이 위로 곧게 선다.
-const JOINT_AXES = { 1: 'y', 2: 'x', 3: 'x', 4: 'x', 5: 'z', 6: 'y' };
+// 모델 파일(assets/models/symphony-5-drawing.glb)의 관절 노드 joint1~joint6을 돌린다.
+// 회전축은 심포니 5 도면대로 joint1 y, joint2~4 x, joint5 y, joint6 x이고 모든 관절이 0이면 팔이 위로 곧게 서고 공구는 옆(+x)을 본다.
+const JOINT_AXES = { 1: 'y', 2: 'x', 3: 'x', 4: 'x', 5: 'y', 6: 'x' };
 
 AFRAME.registerComponent('robot-pose', {
   schema: {

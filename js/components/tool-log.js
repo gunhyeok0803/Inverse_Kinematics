@@ -81,16 +81,30 @@ AFRAME.registerComponent('tool-log', {
 
   // 아래 세 함수는 파일을 만드는 틀이라 AI가 짬.
 
-  // rows를 CSV 글자로 바꾼다. 첫 행은 열 이름이고 그다음부터 기록 행 하나가 파일의 한 줄이다. 시각은 ms, 위치는 m 단위로 소수 다섯째 자리(0.01 mm)까지 쓴다.
+  // rows를 CSV 글자로 바꾼다. 첫 행은 열 이름이고 그다음부터 기록 행 하나가 파일의 한 줄이다.
+  // 파일만 열어도 읽기 쉽게 열 이름은 짧게 하고, 시간은 끌기를 시작한 순간부터 센다.
+  // 단위는 ms와 mm다. 0.0 없이 읽히고 1 mm 목표와 바로 비교된다. 장면 좌표는 m라서 1000을 곱해 쓴다.
+  // drag             몇 번째 끌기인지
+  // time             그 끌기를 잡은 순간부터 지난 시간. ms, 소수 첫째 자리(0.1 ms). 0인 행이 잡은 순간이다
+  // hand_x ~ hand_z  손 위치. 장면 좌표 mm, 소수 둘째 자리(0.01 mm)
+  // tip_x ~ tip_z    공구 끝 위치. 단위는 손과 같다
+  // 속도는 쓰지 않는다. 바로 앞 행과의 거리(mm) ÷ 시간 차이(ms)로 구하면 바로 m/s가 된다.
   toCSV() {
-    const toFiveDecimals = (number) => number.toFixed(5);
-    const lines = ['time_ms,drag_number,event_type,hand_x,hand_y,hand_z,tool_tip_x,tool_tip_y,tool_tip_z'];
+    const toMillimeters = (meters) => (meters * 1000).toFixed(2);
+    const lines = ['drag,time,hand_x,hand_y,hand_z,tip_x,tip_y,tip_z'];
+    let dragStartTime = 0;  // 지금 끌기를 잡은 순간의 시각 (ms)
+    let previousRow = null; // 바로 앞 행
     for (const row of this.rows) {
+      // 잡은 순간이거나 끌기 번호가 바뀌면 새 끌기로 본다
+      if (row.eventType === 'grab' || !previousRow || previousRow.dragNumber !== row.dragNumber) {
+        dragStartTime = row.time;
+      }
       const hand = row.handPosition;
       const toolTip = row.toolTipPosition;
-      lines.push([row.time.toFixed(1), row.dragNumber, row.eventType,
-        toFiveDecimals(hand.x), toFiveDecimals(hand.y), toFiveDecimals(hand.z),
-        toFiveDecimals(toolTip.x), toFiveDecimals(toolTip.y), toFiveDecimals(toolTip.z)].join(','));
+      lines.push([row.dragNumber, (row.time - dragStartTime).toFixed(1),
+        toMillimeters(hand.x), toMillimeters(hand.y), toMillimeters(hand.z),
+        toMillimeters(toolTip.x), toMillimeters(toolTip.y), toMillimeters(toolTip.z)].join(','));
+      previousRow = row;
     }
     return lines.join('\n');
   },

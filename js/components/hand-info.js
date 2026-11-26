@@ -74,6 +74,8 @@ AFRAME.registerComponent('hand-info', {
   },
 
   tick() {
+    // 판이 숨겨져 있으면 글자를 다시 만들 필요가 없다
+    if (!this.el.object3D.visible) return;
     const lines = [];
     for (const side of ['left', 'right']) {
       const handEl = this.data[side];
